@@ -60,7 +60,7 @@
             // Nous parcourons la liste des villes
             villes.forEach(e => {
                 console.log(e.depart.lat)
-                let marker = L.marker([e.depart.lat, e.depart.lon]).addTo(macarte);
+                let marker = L.marker([e.depart.lat, e.depart.lon]).addTo(macarte).bindPopup(e.name);
             });
         }
         window.onload = function () {
