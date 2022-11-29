@@ -1,0 +1,37 @@
+#map {
+    /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+    width: 60%;
+    height: 100vh;
+}
+
+.miam {
+    display: flex;
+
+    &__restau,
+    &__users {
+        width: 20%;
+    }
+
+    &__restau {
+        ul {
+            li {
+                cursor: pointer;
+                background-color: rgba(15, 15, 15, 0.89);
+                color: white;
+                padding: 15px 0 15px 10px;
+                margin-top: 15px;
+                width: 90%;
+                transition: all 0.2s linear;
+
+                &:hover {
+                    background-color: rgba(15, 15, 15, 0.95);
+                    ;
+                }
+            }
+        }
+    }
+
+    &__map {
+        width: 60%;
+    }
+}

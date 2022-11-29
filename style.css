@@ -1,0 +1,36 @@
+@charset "UTF-8";
+#map {
+  /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+  width: 60%;
+  height: 100vh;
+}
+
+.miam {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.miam__restau, .miam__users {
+  width: 20%;
+}
+
+.miam__restau ul li {
+  cursor: pointer;
+  background-color: rgba(15, 15, 15, 0.89);
+  color: white;
+  padding: 15px 0 15px 10px;
+  margin-top: 15px;
+  width: 90%;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.miam__restau ul li:hover {
+  background-color: rgba(15, 15, 15, 0.95);
+}
+
+.miam__map {
+  width: 60%;
+}
+/*# sourceMappingURL=style.css.map */
