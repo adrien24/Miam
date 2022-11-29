@@ -26,7 +26,7 @@
         integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
         crossorigin=""></script>
     <script type="text/javascript">
-        let villes = [
+        let users = [
             {
                 "name": "nico",
                 "depart": [43.852969, 3.349903],
@@ -42,13 +42,14 @@
                 "restaurant": [50.52969, 7.349903]
             },
         ]
-
+        let finish = [48.8512, 2.349903]
+        let lat = 48.852969
+        let lng = 2.349903
 
         // Fonction d'initialisation de la carte
         function initMap() {
             var polylines = [];
-            let lat = 48.852969
-            let lng = 2.349903
+
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
             macarte = L.map('map').setView([lat, lng], 11);
             // point d'arrivé
@@ -61,12 +62,13 @@
             marker.on('dragend', function (e) {
                 lat = marker.getLatLng().lat;
                 lng = marker.getLatLng().lng;
-
+                finish = [marker.getLatLng().lat,marker.getLatLng().lng]
 
                 polylines.forEach(element => {
                     macarte.removeLayer(element)
                 })
                 line()
+                algoDistance()
             });
 
 
@@ -82,23 +84,68 @@
 
             line()
             function line() {
-                villes.forEach(e => {
+                users.forEach(e => {
                     polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
                 })
             }
 
 
             // Nous parcourons la liste des villes
-            villes.forEach(e => {
+            users.forEach(e => {
                 let marker = L.marker([e.depart[0], e.depart[1]]).addTo(macarte).bindPopup(e.name);
             });
 
 
 
         }
+
+        function algoDistance(){
+            const meetTime = new Date();
+            meetTime.setHours(13)
+            meetTime.setMinutes(0);
+            meetTime.setSeconds(0)
+            const vitesse = 5;
+
+            function getDistance(user,finish){
+                return macarte.distance(user,finish)
+            }
+
+            function getDistanceUserFinish(user){
+                let userPos = user.depart;
+                let restoPos = user.restaurant;
+                let userRestaurant = getDistance(userPos,restoPos)
+                let restoFinish = getDistance(restoPos,finish);
+                let totalD = userRestaurant + restoFinish;
+                return (totalD/1000)
+            }
+
+            function getTime(distance){
+                let time = (distance/vitesse)*3600
+                return time
+            }
+
+            function getTimeToLeave(time,meetTime){
+                let newDate = new Date(meetTime.getTime() - time * 1000)
+                return newDate
+            }
+
+            function timeUser(){
+                users.forEach((user) =>{
+                    let distance = getDistanceUserFinish(user);
+                    let time = getTime(distance);
+                    let departTime = getTimeToLeave(time,meetTime)
+                    console.log("User " + (users.indexOf(user) + 1) + " doit partir à " + departTime)
+                })
+            }
+
+            timeUser()
+
+        }
+
         window.onload = function () {
             // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
             initMap();
+            algoDistance()
         };
     </script>
 </body>
