@@ -57,14 +57,6 @@
                 autoPan: true
             }).addTo(macarte);
 
-            function clearMap() {
-                for (i in macarte._layers) {
-
-                    if (macarte._layers[i]._path != undefined) {
-                        macarte.removeLayer(macarte._layers[i]);
-                    }
-                }
-            }
 
             marker.on('dragend', function (e) {
                 lat = marker.getLatLng().lat;
@@ -74,13 +66,8 @@
                 polylines.forEach(element => {
                     macarte.removeLayer(element)
                 })
-                console.log(macarte._layers)
-                toto()
+                line()
             });
-
-
-
-
 
 
 
@@ -93,22 +80,16 @@
             }).addTo(macarte);
 
 
-            toto()
-
-            function toto() {
+            line()
+            function line() {
                 villes.forEach(e => {
-
                     polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
                 })
             }
 
 
-
-
-
             // Nous parcourons la liste des villes
             villes.forEach(e => {
-                console.log(e.depart.lat)
                 let marker = L.marker([e.depart[0], e.depart[1]]).addTo(macarte).bindPopup(e.name);
             });
 
