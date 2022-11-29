@@ -46,10 +46,41 @@
 
         // Fonction d'initialisation de la carte
         function initMap() {
+            var polylines = [];
+            let lat = 48.852969
+            let lng = 2.349903
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-            macarte = L.map('map').setView([48.852969, 2.349903], 11);
+            macarte = L.map('map').setView([lat, lng], 11);
             // point d'arrivé
-            let marker = L.marker([48.852969, 2.349903]).addTo(macarte);
+            let marker = L.marker([lat, lng], {
+                draggable: true,
+                autoPan: true
+            }).addTo(macarte);
+
+            function clearMap() {
+                for (i in macarte._layers) {
+
+                    if (macarte._layers[i]._path != undefined) {
+                        macarte.removeLayer(macarte._layers[i]);
+                    }
+                }
+            }
+
+            marker.on('dragend', function (e) {
+                lat = marker.getLatLng().lat;
+                lng = marker.getLatLng().lng;
+
+
+                polylines.forEach(element => {
+                    macarte.removeLayer(element)
+                })
+                console.log(macarte._layers)
+                toto()
+            });
+
+
+
+
 
 
 
@@ -62,16 +93,26 @@
             }).addTo(macarte);
 
 
-            villes.forEach(e => {
+            toto()
 
-                let polyline = L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [48.852969, 2.349903]], { color: 'red' }).addTo(macarte);
-                console.log(polyline)
-            })
+            function toto() {
+                villes.forEach(e => {
+
+                    polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
+                })
+            }
+
+
+
+
+
             // Nous parcourons la liste des villes
             villes.forEach(e => {
                 console.log(e.depart.lat)
                 let marker = L.marker([e.depart[0], e.depart[1]]).addTo(macarte).bindPopup(e.name);
             });
+
+
 
         }
         window.onload = function () {
