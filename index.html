@@ -52,8 +52,7 @@
         integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
         crossorigin=""></script>
     <script type="text/javascript">
-
-
+        let nameDate
 
         // icones
         var IconRestaurant = L.icon({
@@ -154,7 +153,7 @@
 
         function nameNextUser() {
             for (let i = 0; i < nextUsers.length; i++) {
-                document.getElementById('nameNextUsers').innerHTML += '<li>' + nextUsers[i].name + '</li>';
+                document.getElementById('nameNextUsers').innerHTML += '<li id="timeStart' + [i + 1] + '">' + nextUsers[i].name + '</li>';
             }
         }
 
@@ -163,7 +162,8 @@
             var polylines = [];
             let myRoom
             let markerPosition = [];
-            let markerPositionR = []
+            let markerPositionR = [];
+
 
             let changeName = document.getElementById('myName')
             changeName.addEventListener("change", function () {
@@ -189,6 +189,7 @@
             function CurrentName() {
                 for (let i = 0; i < nextUsers.length; i++) {
                     if (nextUsers[i].name != name) {
+
                         document.getElementById('nameId').innerHTML = name;
                     } else {
                         break;
@@ -221,8 +222,6 @@
 
                 markers();
                 line()
-
-
             })
 
 
@@ -232,6 +231,7 @@
             buttonItems.forEach(function (item, idx) {
                 item.addEventListener('click', function () {
 
+                    color = document.getElementById('myColor').value
 
 
                     restaurant = [restaurantMap[idx].lat, restaurantMap[idx].long]
@@ -244,8 +244,6 @@
                             "time": 0
                         },
                     ]
-
-                    console.log(color)
 
                     polylines.forEach(element => {
                         macarte.removeLayer(element)
@@ -379,13 +377,27 @@
                 return newDate
             }
 
+            let timesstart = []
+
             function timeUser() {
                 allUsers.forEach((user) => {
                     let distance = getDistanceUserFinish(user);
                     let time = getTime(distance);
                     let departTime = getTimeToLeave(time, meetTime)
-                    console.log("User " + (allUsers.indexOf(user) + 1) + " doit partir à " + departTime)
+                    let times = [departTime]
+
+                    timesstart.push(times)
+
                 })
+
+
+                for (let i = 0; i < allUsers.length; i++) {
+
+                    document.getElementById('timeStart' + [i + 1]).innerHTML = nextUsers[i].name + '<br>' + timesstart[i + 1]
+                    document.getElementById('nameId').innerHTML = currentUser[0].name + '<br>' + timesstart[0]
+
+                }
+
             }
 
             timeUser()

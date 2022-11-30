@@ -15,10 +15,15 @@ input[type="color"] {
     cursor: pointer
 }
 
+
+
+
 #map {
     /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
     width: 60%;
     height: 90vh;
+    display: flex;
+    align-items: center;
 
 }
 
