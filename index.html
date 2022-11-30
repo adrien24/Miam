@@ -19,9 +19,9 @@
         <div class="miam__left">
             <div class="miam__left__restau">
                 <ul>
-                    <li onclick="restau(48.84419446094281, 2.342391792833065)">Kebab tah les anciens</li>
-                    <li onclick="restau(48.87717877228112, 2.328429771127876)">Tacos tah les anciens</li>
-                    <li onclick="restau(48.85087658321301, 2.408076758582476)">Grec tah les anciens</li>
+                    <li class="button">Kebab tah les anciens</li>
+                    <li class="button">Tacos tah les anciens</li>
+                    <li class="button">Grec tah les anciens</li>
                 </ul>
             </div>
             <div class="miam__left__room">
@@ -36,11 +36,10 @@
             <!-- Ici s'affichera la carte -->
         </div>
         <div class="miam__left">
-            <ul>
+            <ul id="nameNextUsers">
                 <li id="roomId">Pas de Room</li>
                 <li id="nameId"></li>
-                <li>alex</li>
-                <li>Chachat</li>
+
             </ul>
         </div>
     </div>
@@ -75,17 +74,26 @@
             popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
         });
 
-        let name = "Anonyme => you";
+        let name = "NoName";
         let depart = [48.843523789371154, 2.285988810800521];
-        let restaurant = [48.843523789371154, 2.285988810800521];
-        function restau(lati, lngi) {
+        let restaurantMap = [
+            {
+                "lat": 48.84419446094281,
+                "long": 2.342391792833065
+            },
+            {
+                "lat": 48.888754946386406,
+                "long": 2.3297996991764607
+            },
+            {
+                "lat": 48.89304387272991,
+                "long": 2.331172990098648
+            }
+        ];
 
-            restaurant = [lati, lngi]
-            macarte.remove();
-            initMap();
 
-        }
 
+        let restaurant = [48.843523789371154, 2.285988810800521]
 
         let currentUser = [
             {
@@ -110,6 +118,12 @@
                 "restaurant": [48.82906110770671, 2.3265008930050364],
                 "time": 0
             },
+            {
+                "name": "Chacha",
+                "depart": [48.85436806053594, 2.415078157486095],
+                "restaurant": [48.82906110770671, 2.3265008930050364],
+                "time": 0
+            },
         ]
 
         let allUsers = [];
@@ -122,9 +136,20 @@
         })
 
 
+
+
+
         let finish = [48.8512, 2.349903]
         let lat = 48.852969
         let lng = 2.349903
+
+        nameNextUser()
+
+        function nameNextUser() {
+            for (let i = 0; i < nextUsers.length; i++) {
+                document.getElementById('nameNextUsers').innerHTML += '<li>' + nextUsers[i].name + '</li>';
+            }
+        }
 
         // Fonction d'initialisation de la carte
         function initMap() {
@@ -143,7 +168,6 @@
                 })
                 markers();
                 line();
-                algoDistance();
             })
 
             let Room = document.getElementById('myRoom')
@@ -156,10 +180,53 @@
             CurrentName()
 
             function CurrentName() {
+                for (let i = 0; i < nextUsers.length; i++) {
+                    if (nextUsers[i].name != name) {
+                        document.getElementById('nameId').innerHTML = name;
+                    } else {
+                        name = "NoName"
+                        document.getElementById('nameId').innerHTML = name;
+                        break;
 
-                document.getElementById('nameId').innerHTML = name;
-
+                    }
+                }
             }
+
+
+            let button = document.querySelectorAll('.button')
+
+
+            buttonItems = [].slice.call(button);
+            buttonItems.forEach(function (item, idx) {
+                item.addEventListener('click', function () {
+
+
+
+                    restaurant = [restaurantMap[idx].lat, restaurantMap[idx].long]
+                    currentUser = [
+                        {
+                            "name": name,
+                            "depart": depart,
+                            "restaurant": restaurant,
+                            "time": 0
+                        },
+                    ]
+
+                    polylines.forEach(element => {
+                        macarte.removeLayer(element)
+                    })
+                    markerPositionR.forEach(element => {
+                        macarte.removeLayer(element)
+                    })
+                    allUsers.splice(0, 1, currentUser[0])
+
+                    markers();
+                    line()
+                    algoDistance()
+                });
+            });
+
+
 
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
             macarte = L.map('map').setView([lat, lng], 13);
@@ -201,7 +268,6 @@
 
                 currentUser.forEach(e => {
 
-                    console.log(restaurant);
                     if (restaurant[0] === 48.843523789371154) {
                         polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
                     } else {
