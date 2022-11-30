@@ -19,9 +19,9 @@
         <div class="miam__left">
             <div class="miam__left__restau">
                 <ul>
-                    <li onclick="restau(50.52969, 1.349903)">Kebab tah les anciens</li>
-                    <li onclick="restau(33.52969, 9.349903)">Tacos tah les anciens</li>
-                    <li onclick="restau(25.52969, 3.349903)">Grec tah les anciens</li>
+                    <li onclick="restau(48.84419446094281, 2.342391792833065)">Kebab tah les anciens</li>
+                    <li onclick="restau(48.87717877228112, 2.328429771127876)">Tacos tah les anciens</li>
+                    <li onclick="restau(48.85087658321301, 2.408076758582476)">Grec tah les anciens</li>
                 </ul>
             </div>
             <div class="miam__left__room">
@@ -156,12 +156,13 @@
             CurrentName()
 
             function CurrentName() {
+
                 document.getElementById('nameId').innerHTML = name;
 
             }
 
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-            macarte = L.map('map').setView([lat, lng], 11);
+            macarte = L.map('map').setView([lat, lng], 13);
             // point d'arrivé
             let marker = L.marker([lat, lng], {
                 draggable: true,
