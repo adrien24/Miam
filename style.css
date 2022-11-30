@@ -5,6 +5,15 @@
   font-weight: 500;
 }
 
+input[type="color"] {
+  opacity: 1;
+  width: 20%;
+  height: 32px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 #map {
   /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
   width: 60%;

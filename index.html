@@ -25,11 +25,14 @@
                 </ul>
             </div>
             <div class="miam__left__room">
+                <label for="myRoom">Choisi ta couleur:</label>
+                <input id="myColor" type="color">
+
                 <label for="myName">Changer votre nom :</label>
-                <input id="myName" type="text">
+                <input id="myName" type="text" maxlength="15">
 
                 <label for="myRoom">Accéder à votre room :</label>
-                <input id="myRoom" type="number">
+                <input id="myRoom" type="text" maxlength="15">
             </div>
         </div>
         <div id="map" class="miam__map">
@@ -37,7 +40,7 @@
         </div>
         <div class="miam__left">
             <ul id="nameNextUsers">
-                <li id="roomId">Pas de Room</li>
+                <li id="roomId">Nom de la room :</li>
                 <li id="nameId"></li>
 
             </ul>
@@ -100,6 +103,7 @@
                 "name": name,
                 "depart": depart,
                 "restaurant": restaurant,
+                "color": "black",
                 "time": 0
             },
         ]
@@ -110,18 +114,21 @@
                 "name": "Alex",
                 "depart": [48.89546458872145, 2.3752527207426732],
                 "restaurant": [48.87108171075437, 2.337487220382532],
+                "color": "blue",
                 "time": 0
             },
             {
-                "name": "Chachat",
+                "name": "Neil",
                 "depart": [48.85436806053594, 2.415078157486095],
                 "restaurant": [48.82906110770671, 2.3265008930050364],
+                "color": "gray",
                 "time": 0
             },
             {
-                "name": "Chacha",
-                "depart": [48.85436806053594, 2.415078157486095],
-                "restaurant": [48.82906110770671, 2.3265008930050364],
+                "name": "Louis",
+                "depart": [48.89970001498285, 2.2964356216592368],
+                "restaurant": [48.86447947002862, 2.2923157488926758],
+                "color": "green",
                 "time": 0
             },
         ]
@@ -174,7 +181,7 @@
             Room.addEventListener("change", function () {
 
                 myRoom = document.getElementById('myRoom').value
-                document.getElementById('roomId').innerHTML = 'Room n° ' + myRoom;
+                document.getElementById('roomId').innerHTML = 'Nom de la room : ' + myRoom;
             })
 
             CurrentName()
@@ -184,8 +191,6 @@
                     if (nextUsers[i].name != name) {
                         document.getElementById('nameId').innerHTML = name;
                     } else {
-                        name = "NoName"
-                        document.getElementById('nameId').innerHTML = name;
                         break;
 
                     }
@@ -193,8 +198,35 @@
             }
 
 
-            let button = document.querySelectorAll('.button')
+            let color = document.getElementById('myColor')
+            color.addEventListener("change", function () {
+                color = document.getElementById('myColor').value
 
+                currentUser = [
+                    {
+                        "name": name,
+                        "depart": depart,
+                        "restaurant": restaurant,
+                        "color": color,
+                        "time": 0
+                    },
+                ]
+                polylines.forEach(element => {
+                    macarte.removeLayer(element)
+                })
+                markerPositionR.forEach(element => {
+                    macarte.removeLayer(element)
+                })
+                allUsers.splice(0, 1, currentUser[0])
+
+                markers();
+                line()
+
+
+            })
+
+
+            let button = document.querySelectorAll('.button')
 
             buttonItems = [].slice.call(button);
             buttonItems.forEach(function (item, idx) {
@@ -208,9 +240,12 @@
                             "name": name,
                             "depart": depart,
                             "restaurant": restaurant,
+                            "color": color,
                             "time": 0
                         },
                     ]
+
+                    console.log(color)
 
                     polylines.forEach(element => {
                         macarte.removeLayer(element)
@@ -225,6 +260,10 @@
                     algoDistance()
                 });
             });
+
+
+            // color
+
 
 
 
@@ -263,15 +302,15 @@
             line()
             function line() {
                 nextUsers.forEach(e => {
-                    polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
+                    polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: e.color }).addTo(macarte))
                 })
 
                 currentUser.forEach(e => {
 
                     if (restaurant[0] === 48.843523789371154) {
-                        polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
+                        polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: e.color }).addTo(macarte))
                     } else {
-                        polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
+                        polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: e.color }).addTo(macarte))
                     }
 
                 })
