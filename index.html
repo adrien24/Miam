@@ -16,21 +16,31 @@
 
 <body>
     <div class="miam">
-        <div class="miam__restau">
-            <ul>
-                <li onclick="restau(50.52969, 1.349903)">Kebab tah les anciens</li>
-                <li onclick="restau(33.52969, 9.349903)">Tacos tah les anciens</li>
-                <li onclick="restau(25.52969, 3.349903)">Grec tah les anciens</li>
-            </ul>
+        <div class="miam__left">
+            <div class="miam__left__restau">
+                <ul>
+                    <li onclick="restau(50.52969, 1.349903)">Kebab tah les anciens</li>
+                    <li onclick="restau(33.52969, 9.349903)">Tacos tah les anciens</li>
+                    <li onclick="restau(25.52969, 3.349903)">Grec tah les anciens</li>
+                </ul>
+            </div>
+            <div class="miam__left__room">
+                <label for="myName">Changer votre nom :</label>
+                <input id="myName" type="text">
+
+                <label for="myRoom">Accéder à votre room :</label>
+                <input id="myRoom" type="number">
+            </div>
         </div>
         <div id="map" class="miam__map">
             <!-- Ici s'affichera la carte -->
         </div>
-        <div class="miam__restau">
+        <div class="miam__left">
             <ul>
-                <li>Nicolas</li>
+                <li id="roomId">Pas de Room</li>
+                <li id="nameId"></li>
                 <li>alex</li>
-                <li>Grec tah les anciens</li>
+                <li>Chachat</li>
             </ul>
         </div>
     </div>
@@ -65,8 +75,9 @@
             popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
         });
 
-
-        let restaurant = [43.852969, 3.349903];
+        let name = "Anonyme => you";
+        let depart = [48.843523789371154, 2.285988810800521];
+        let restaurant = [48.843523789371154, 2.285988810800521];
         function restau(lati, lngi) {
 
             restaurant = [lati, lngi]
@@ -75,10 +86,11 @@
 
         }
 
+
         let currentUser = [
             {
-                "name": "Nico",
-                "depart": [43.852969, 3.349903],
+                "name": name,
+                "depart": depart,
                 "restaurant": restaurant,
                 "time": 0
             },
@@ -88,14 +100,14 @@
         let nextUsers = [
             {
                 "name": "Alex",
-                "depart": [50.52969, 5.349903],
-                "restaurant": [56.52969, 8.349903],
+                "depart": [48.89546458872145, 2.3752527207426732],
+                "restaurant": [48.87108171075437, 2.337487220382532],
                 "time": 0
             },
             {
                 "name": "Chachat",
-                "depart": [45.52969, 4.349903],
-                "restaurant": [48.52969, 4.349903],
+                "depart": [48.85436806053594, 2.415078157486095],
+                "restaurant": [48.82906110770671, 2.3265008930050364],
                 "time": 0
             },
         ]
@@ -109,10 +121,6 @@
             allUsers.push(element)
         })
 
-        console.log(allUsers)
-
-
-
 
         let finish = [48.8512, 2.349903]
         let lat = 48.852969
@@ -121,9 +129,39 @@
         // Fonction d'initialisation de la carte
         function initMap() {
             var polylines = [];
+            let myRoom
+            let markerPosition = [];
+            let markerPositionR = []
+
+            let changeName = document.getElementById('myName')
+            changeName.addEventListener("change", function () {
+
+                name = document.getElementById('myName').value
+                CurrentName();
+                markerPosition.forEach(element => {
+                    macarte.removeLayer(element)
+                })
+                markers();
+                line();
+                algoDistance();
+            })
+
+            let Room = document.getElementById('myRoom')
+            Room.addEventListener("change", function () {
+
+                myRoom = document.getElementById('myRoom').value
+                document.getElementById('roomId').innerHTML = 'Room n° ' + myRoom;
+            })
+
+            CurrentName()
+
+            function CurrentName() {
+                document.getElementById('nameId').innerHTML = name;
+
+            }
 
             // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
-            macarte = L.map('map').setView([lat, lng], 5);
+            macarte = L.map('map').setView([lat, lng], 11);
             // point d'arrivé
             let marker = L.marker([lat, lng], {
                 draggable: true,
@@ -157,15 +195,13 @@
             line()
             function line() {
                 nextUsers.forEach(e => {
-
                     polylines.push(L.polyline([[e.depart[0], e.depart[1]], [e.restaurant[0], e.restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
-
                 })
 
                 currentUser.forEach(e => {
 
                     console.log(restaurant);
-                    if (restaurant[0] === 43.852969) {
+                    if (restaurant[0] === 48.843523789371154) {
                         polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
                     } else {
                         polylines.push(L.polyline([[e.depart[0], e.depart[1]], [restaurant[0], restaurant[1]], [lat, lng]], { color: 'red' }).addTo(macarte))
@@ -175,29 +211,33 @@
 
             }
 
+            markers();
 
-            // Nous parcourons la liste des villes
-            nextUsers.forEach(e => {
-                let marker = L.marker([e.depart[0], e.depart[1]], { icon: IconUsers }).addTo(macarte).bindTooltip(e.name + '<br/>',
-                    {
-                        permanent: true,
-                        direction: 'right'
-                    });
-                let markerR = L.marker([e.restaurant[0], e.restaurant[1]], { icon: IconRestaurant }).addTo(macarte).bindPopup(e.name);
-            });
+            function markers() {
+                // Nous parcourons la liste des villes
+                nextUsers.forEach(e => {
+                    markerPosition.push(L.marker([e.depart[0], e.depart[1]], { icon: IconUsers }).addTo(macarte).bindTooltip(e.name + '<br/>',
+                        {
+                            permanent: true,
+                            direction: 'right'
+                        }));
+                    markerPositionR.push(L.marker([e.restaurant[0], e.restaurant[1]], { icon: IconRestaurant }).addTo(macarte).bindPopup(e.name));
+                });
 
-            currentUser.forEach(e => {
-                let marker = L.marker([e.depart[0], e.depart[1]], { icon: IconUsers }).addTo(macarte).bindTooltip(e.name + '<br/>',
-                    {
-                        permanent: true,
-                        direction: 'right'
-                    });;
-                if (restaurant[0] !== 43.852969) {
-                    let markerR = L.marker([restaurant[0], restaurant[1]], { icon: IconRestaurant }).addTo(macarte).bindPopup(e.name);
-                } else {
+                currentUser.forEach(e => {
+                    markerPosition.push(L.marker([e.depart[0], e.depart[1]], { icon: IconUsers }).addTo(macarte).bindTooltip(name + '<br/>',
+                        {
+                            permanent: true,
+                            direction: 'right'
+                        }));
+                    if (restaurant[0] !== 48.843523789371154) {
+                        markerPositionR.push(L.marker([restaurant[0], restaurant[1]], { icon: IconRestaurant }).addTo(macarte).bindPopup(name));
+                    } else {
 
-                }
-            })
+                    }
+                })
+
+            }
 
         }
 
